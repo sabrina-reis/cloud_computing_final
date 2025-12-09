@@ -10,9 +10,11 @@ const sampleIPs = JSON.parse(open('../sample_ips.json'));
 
 export let options = {
 	stages: [
-		{duration: '10m', target: 10},
-  summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)'],	
+    {duration: '1m', target:120},
+		{duration: '10m', target: 120},
+    {duration: '1m', target:120},
   ],
+  summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)'],	
 };
 
 export default async function () {

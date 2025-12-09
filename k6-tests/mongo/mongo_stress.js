@@ -4,7 +4,7 @@ import {check, sleep} from 'k6';
 const client = xk6_mongo.newClient('mongodb://10.128.0.7:27017');
 
 // Load real IPs from sample file
-const sampleIPs = JSON.parse(open('./sample_ips.json'));
+const sampleIPs = JSON.parse(open('../sample_ips.json'));
 
 export let options = {
   stages: [

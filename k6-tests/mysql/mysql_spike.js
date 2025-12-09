@@ -5,7 +5,7 @@ import { check, sleep } from 'k6';
 const db = sql.open(driver, 'root:infrared-project@tcp(10.128.0.6:3306)/ip_database');
 
 // Load real IPs from sample file
-const sampleIPs = JSON.parse(open('./sample_ips.json'));
+const sampleIPs = JSON.parse(open('../sample_ips.json'));
 
 export let options = {
   stages: [
