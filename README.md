@@ -101,7 +101,7 @@ Database instances: e2-small (2 vCPU, 2 GB RAM)
 K6 testing: e2-standard-4 (4 vCPU, 8 GB RAM)
 Grafana monitoring: e2-micro (2 vCPU, 1 GB RAM)
 
-🧹 Cleanup
+Cleanup
 To avoid ongoing charges, delete all resources:
 
 bash
@@ -117,4 +117,5 @@ gcloud compute forwarding-rules delete mysql-lb --region=us-central1
 gcloud compute forwarding-rules delete mongodb-lb --region=us-central1
 
 gcloud compute instances delete k6-testing-vm grafana-instance --zone=us-central1-a
+
 
