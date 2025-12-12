@@ -26,12 +26,17 @@ The bootstrap script performs the following tasks:
 - Sets up the load balancers
 
 # Begin testing
-Test Scenarios
+Tests Available
 - Constant load
 - Stress test
 - Spike test
 - Soak test
 Workload: YCSB Workload C (100% read operations, random IP lookups)
+
+To run a test, use the format
+```bash
+k6 /path/to/test/file
+```
 
 For more information on the tests, see cloud_computing_report.pdf.
 
@@ -66,6 +71,7 @@ gcloud compute forwarding-rules delete mysql-lb --region=us-central1
 gcloud compute forwarding-rules delete mongodb-lb --region=us-central1
 
 gcloud compute instances delete k6-testing-vm grafana-instance --zone=us-central1-a
+
 
 
 
