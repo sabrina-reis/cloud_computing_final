@@ -1,7 +1,7 @@
 # IP Metadata Database Performance Comparison
 Cloud-based performance testing infrastructure comparing MySQL vs MongoDB for IP metadata lookups under varying workloads.
 
-Project Overview
+# Project Overview
 This project implements and benchmarks MySQL and MongoDB for storing and retrieving 50 million IP address geolocation records. The infrastructure uses Google Cloud Platform with auto-scaling, load balancing, and comprehensive monitoring to determine optimal database configurations under various workloads.
 
 # Getting Started
@@ -26,6 +26,8 @@ Test Scenarios
 - Soak test
 Workload: YCSB Workload C (100% read operations, random IP lookups)
 
+For more information on the tests, see cloud_computing_report.pdf.
+
 # Configuration
 Auto-scaling Policy
 - Metric: CPU utilization
@@ -38,6 +40,8 @@ VM Specifications
 - Database instances: e2-small (2 vCPU, 2 GB RAM)
 - K6 testing: e2-standard-4 (4 vCPU, 8 GB RAM)
 - Grafana monitoring: e2-micro (2 vCPU, 1 GB RAM)
+
+For more information on the architecture, see cloud_computing_report.pdf.
 
 # Cleanup
 To avoid ongoing charges, delete all resources:
@@ -55,6 +59,7 @@ gcloud compute forwarding-rules delete mysql-lb --region=us-central1
 gcloud compute forwarding-rules delete mongodb-lb --region=us-central1
 
 gcloud compute instances delete k6-testing-vm grafana-instance --zone=us-central1-a
+
 
 
 
