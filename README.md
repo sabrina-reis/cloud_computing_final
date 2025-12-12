@@ -10,11 +10,15 @@ Prerequisites
 - gcloud CLI installed and authenticated: gcloud init
 - Python 3.8+ for scripts and analysis
 
-# Run setup script
+# Setup
+- Clone repo
+- Navigate to repo directory
+- Run setup script
+```bash
 ./bootstrap.sh
+```
 
 # Begin testing
-
 Test Scenarios
 - Constant load
 - Stress test
@@ -51,6 +55,7 @@ gcloud compute forwarding-rules delete mysql-lb --region=us-central1
 gcloud compute forwarding-rules delete mongodb-lb --region=us-central1
 
 gcloud compute instances delete k6-testing-vm grafana-instance --zone=us-central1-a
+
 
 
 
