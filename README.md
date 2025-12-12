@@ -1,5 +1,5 @@
 # Project Overview
-This project implements and benchmarks MySQL and MongoDB for storing and retrieving 50 million IP address geolocation records. The infrastructure uses Google Cloud Platform with auto-scaling, load balancing, and comprehensive monitoring to determine optimal database configurations under various workloads.
+This project implements and benchmarks MySQL and MongoDB for storing and retrieving 50 million IP address geolocation records. The infrastructure uses Google Cloud Platform with auto-scaling, load balancing, and comprehensive monitoring to assess database performance under various workloads and profile cost-performance tradeoffs in horizontal scaling.
 
 # Getting Started
 Prerequisites
@@ -66,6 +66,7 @@ gcloud compute forwarding-rules delete mysql-lb --region=us-central1
 gcloud compute forwarding-rules delete mongodb-lb --region=us-central1
 
 gcloud compute instances delete k6-testing-vm grafana-instance --zone=us-central1-a
+
 
 
 
