@@ -1,72 +1,92 @@
-import pandas as pd
+"""
+Scaling Model Analysis for Database Performance
+Derives capacity scaling model
+Determines if scaling is linear, sub-linear, or super-linear
+"""
+
 import numpy as np
-from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
+from scipy import stats
+import pandas as pd
 
-# -------------------------------
-# Load CSV
-# -------------------------------
-df = pd.read_csv("mongodb_results.csv")
+# mongo_db
+data = {
+    'Instances': [1, 2, 4, 8],
+    'Throughput_QPS': [162.51, 101.03, 101.14, 114.73],  
+    'P95_Latency': [1.73, 1.06, 1.06, 8.85]
+}
 
-# Remove commas in Total Iterations and convert to int
-df['Total Iterations'] = df['Total Iterations'].str.replace(',', '').astype(int)
+# mysql
+# data = {
+#     'Instances': [1, 2, 4, 8],
+#     'Throughput_QPS': [131.19, 133.93, 113, 102.84],
+#     'P95_Latency': [1.65, 1.74, 3.48, 3.48],
+# }
 
-# -------------------------------
-# Example: Fit scaling model for throughput vs instances at a fixed VU load
-# -------------------------------
-# Choose VU load to analyze
-vu_load = 230
-df_vu = df[df['VUs'] == vu_load]
+# change this for graph titles
+data_type = "mongo"
 
-x = df_vu['Instances'].values
-y = df_vu['Throughput (iter/s)'].values
+df = pd.DataFrame(data)
+# print("Data:")
+# print(df)
+# print()
 
-# -------------------------------
-# Define scaling models
-# -------------------------------
-def linear(x, a, b):
-    """Linear scaling model"""
-    return a * x + b
+# Calculate metrics for number of instances
+baseline_throughput = df['Throughput_QPS'].iloc[0]  # 1-instance throughput
+df['Per_Instance_QPS'] = df['Throughput_QPS'] / df['Instances']
+df['Ideal_Linear_Throughput'] = baseline_throughput * df['Instances']
 
-def sublinear(x, a, b, c):
-    """Sublinear/saturation model"""
-    return a * x / (b + x) + c
 
-# -------------------------------
-# Fit models
-# -------------------------------
-popt_linear, _ = curve_fit(linear, x, y)
-popt_sublinear, _ = curve_fit(sublinear, x, y, maxfev=10000)
+# Fit linear regression model
+x = df['Instances'].values
+y = df['Throughput_QPS'].values
+y_2 = df['P95_Latency'].values
 
-# -------------------------------
-# Plot results
-# -------------------------------
-plt.scatter(x, y, label="Data")
-plt.plot(x, linear(x, *popt_linear), 'r--', label="Linear Fit")
-plt.plot(x, sublinear(x, *popt_sublinear), 'g-', label="Sublinear Fit")
-plt.xlabel("Instances")
-plt.ylabel("Throughput (iter/s)")
-plt.title(f"MongoDB Scaling @ {vu_load} VUs")
-plt.legend()
+slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+print("Linear regression: y = mx + b")
+print(f"b (baseline constant/y-intercept) = {intercept:.4f} QPS")
+print(f"m (slope) = {slope:.4f}")
+print()
+
+# Interpolate for other numbers of instances
+instances_range = np.linspace(1, 8, 100)
+predicted_throughput = (instances_range * slope) + intercept
+ideal_linear = baseline_throughput * instances_range
+
+# Plot 1: throughput vs. instances
+fig, ax1 = plt.subplots()
+ax1.scatter(x, y, s=100, color='blue', label='Measured Data', zorder=5)
+ax1.plot(instances_range, predicted_throughput, 'r--', linewidth=2, 
+         label=f'Linear regression: y = {slope:.3f}x + {intercept:.2f}')
+ax1.plot(instances_range, ideal_linear, 'g:', linewidth=2, 
+         label=f'Linear: T = {baseline_throughput:.2f} x N')
+ax1.set_xlabel('Number of Instances', fontsize=12)
+ax1.set_ylabel('Throughput (QPS)', fontsize=12)
+ax1.legend()
+# plt.show()
+plt.savefig(f'throughput_vs_instances_{data_type}.png', dpi=300, bbox_inches='tight')
+
+# Plot 2: per-instance throughput
+fig, ax2 = plt.subplots()
+ax2.plot(df['Instances'], df['Per_Instance_QPS'], 'o-', linewidth=2, 
+         markersize=10, color='green')
+ax2.set_xlabel('Number of Instances', fontsize=12)
+ax2.set_ylabel('Throughput per Instance (QPS)', fontsize=12)
+ax2.set_title('Per-Instance Throughput', fontsize=12, fontweight='bold')
 plt.show()
+plt.savefig(f'throughput_per_instances_{data_type}.png', dpi=300, bbox_inches='tight')
 
-# -------------------------------
-# Print fitted parameters
-# -------------------------------
-print("Linear fit: y = a*x + b")
-print(f"a = {popt_linear[0]:.2f}, b = {popt_linear[1]:.2f}")
 
-print("Sublinear fit: y = a*x/(b+x) + c")
-print(f"a = {popt_sublinear[0]:.2f}, b = {popt_sublinear[1]:.2f}, c = {popt_sublinear[2]:.2f}")
+# Plot 3: P(95) Latency
+fig, ax3 = plt.subplots()
+ax3.plot(df['Instances'], df['P95_Latency'], 'o-', linewidth=2, 
+         markersize=10, color='red')
+ax3.set_xlabel('Number of Instances', fontsize=12)
+ax3.set_ylabel('P(95) Latency', fontsize=12)
+ax3.set_title('Per-Instance Latency', fontsize=12, fontweight='bold')
+plt.show()
+plt.savefig(f'latency_{data_type}.png', dpi=300, bbox_inches='tight')
 
-# -------------------------------
-# Optional: Fit models for cost per 1000 iterations vs instances
-# -------------------------------
-# First calculate cost per 1000 iterations
-df['Cost_per_1000_iter'] = df['Total Iterations'] / df['Total Iterations']  # placeholder, replace with real cost calculation
-
-y_cost = df_vu['Cost_per_1000_iter'].values
-# Fit a simple model if desired, e.g., linear
-popt_cost, _ = curve_fit(linear, x, y_cost)
-print(f"Cost model: y = a*x + b -> a={popt_cost[0]:.5f}, b={popt_cost[1]:.5f}")
+# plt.savefig('scaling_model_analysis.png', dpi=300, bbox_inches='tight')
+# print("Saved plot: scaling_model_analysis.png")
 
