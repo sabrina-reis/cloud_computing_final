@@ -15,6 +15,16 @@ Prerequisites
 ./bootstrap.sh
 ```
 
+The bootstrap script performs the following tasks:
+- Creates MySQL and MongoDB VM instances
+- Creates managed instance groups for MySQL and MongoDB
+- Creates VM for k6 testing
+- Creates VM for Grafana and sets up Grafana
+- Imports  pre-built database snapshots onto MySQL and MongoDB VM instances
+- Sets up MySQL and MongoDB on the VM instances
+- Makes a template for the MySQL and MongoDB VM instances
+- Sets up the load balancers
+
 # Begin testing
 Test Scenarios
 - Constant load
@@ -56,6 +66,7 @@ gcloud compute forwarding-rules delete mysql-lb --region=us-central1
 gcloud compute forwarding-rules delete mongodb-lb --region=us-central1
 
 gcloud compute instances delete k6-testing-vm grafana-instance --zone=us-central1-a
+
 
 
 
