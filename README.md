@@ -6,9 +6,9 @@ This project implements and benchmarks MySQL and MongoDB for storing and retriev
 
 # Getting Started
 Prerequisites
-Google Cloud Platform account with billing enabled
-gcloud CLI installed and authenticated: gcloud init
-Python 3.8+ for scripts and analysis
+- Google Cloud Platform account with billing enabled
+- gcloud CLI installed and authenticated: gcloud init
+- Python 3.8+ for scripts and analysis
 
 # Run setup script
 ./bootstrap.sh
@@ -24,20 +24,21 @@ Workload: YCSB Workload C (100% read operations, random IP lookups)
 
 # Configuration
 Auto-scaling Policy
-Metric: CPU utilization
-Target: 70% CPU
-Min instances: 0
-Max instances: 8
-Cool-down: 60 seconds
+- Metric: CPU utilization
+- Target: 70% CPU
+- Min instances: 0
+- Max instances: 8
+- Cool-down: 60 seconds
+  
 VM Specifications
-Database instances: e2-small (2 vCPU, 2 GB RAM)
-K6 testing: e2-standard-4 (4 vCPU, 8 GB RAM)
-Grafana monitoring: e2-micro (2 vCPU, 1 GB RAM)
+- Database instances: e2-small (2 vCPU, 2 GB RAM)
+- K6 testing: e2-standard-4 (4 vCPU, 8 GB RAM)
+- Grafana monitoring: e2-micro (2 vCPU, 1 GB RAM)
 
 # Cleanup
 To avoid ongoing charges, delete all resources:
 
-bash
+```bash
 gcloud compute instances list
 gcloud compute instance-groups managed list
 gcloud compute forwarding-rules list
